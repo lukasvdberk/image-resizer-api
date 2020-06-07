@@ -2,10 +2,10 @@ from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 import os
 from PIL import Image
-
+import requests
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = "uploads/"
+app.config['UPLOAD_FOLDER'] = 'uploads/'
 
 # https://pythonbasics.org/flask-upload-file/
 # TODO add max size in bytes
@@ -14,12 +14,17 @@ app.config['UPLOAD_FOLDER'] = "uploads/"
 def append_local_upload_dir(filename):
   return os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
+def get_upload_link(filename):
+  # TODO add jpeg support
+  files = {'file': (filename, open(filename,'rb'), 'image/png')}
+  r = requests.post(url='https://file.coffee/api/v1/upload', files=files)
+  return r.json()
 
-@app.route("/")
+@app.route('/')
 def index():
   return render_template('upload.html')
 
-@app.route("/resize/", methods = ['GET', 'POST'])
+@app.route('/resize/', methods = ['GET', 'POST'])
 def resize():
   try:
     width = int(request.args.get('width'))
@@ -32,14 +37,14 @@ def resize():
 
     img_to_resize = Image.open(img_file_loc)
     resized_img = img_to_resize.resize((width, height))
-    resized_img.save(img_file_loc, "PNG", optimize=True)
+    resized_img.save(img_file_loc, 'PNG', optimize=True)
 
-    return 'file uploaded successfully'
+    return get_upload_link(img_file_loc)
     
   except ValueError:
-    return "Make sure width and height are numbers"
-  return "Hello World!"
+    return 'Make sure width and height are numbers'
+  return 'Hello World!'
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   app.run(debug=True)
 
