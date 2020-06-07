@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template
-
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = "tmp_uploads/"
+app.config['UPLOAD_FOLDER'] = "uploads/"
 
 # https://pythonbasics.org/flask-upload-file/
 # TODO add max size in bytes
@@ -19,8 +20,12 @@ def resize():
     height = int(request.args.get('height'))
 
     f = request.files['image']
-    image_filename = f.save(f.filename)
+    image_filename = f.save(
+      os.path.join(app.config['UPLOAD_FOLDER'], 
+      secure_filename(f.filename))
+    )
     print(image_filename)
+
     return 'file uploaded successfully'
   except ValueError:
     return "Make sure width and height are numbers"
