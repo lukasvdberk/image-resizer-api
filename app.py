@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 from PIL import Image
 import requests
+import magic
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
@@ -16,7 +17,10 @@ def append_local_upload_dir(filename):
 
 def get_upload_link(filename):
   # TODO add jpeg support
-  files = {'file': (filename, open(filename,'rb'), 'image/png')}
+  mime = magic.Magic(mime=True)
+  mimetype = mime.from_file(filename)
+
+  files = {'file': (filename, open(filename,'rb'), mimetype)}
   r = requests.post(url='https://file.coffee/api/v1/upload', files=files)
   return r.json()
 
