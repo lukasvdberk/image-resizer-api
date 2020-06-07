@@ -12,7 +12,10 @@ app.config['UPLOAD_FOLDER'] = 'uploads/'
 # TODO add max size in bytes
 # app.config['MAX_CONTENT_PATH'] = 8000
 
+# TODO documentation endpoint
+# TODO add more options for resizing
 def append_local_upload_dir(filename):
+  # TODO add options for width and height
   return os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
 def get_upload_link(filename):
