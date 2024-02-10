@@ -42,5 +42,7 @@ COPY . .
 # flask port
 EXPOSE 5000
 
+RUN mkdir -p uploads
+
 # Run the application
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
