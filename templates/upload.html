@@ -1,19 +1,129 @@
-<html>
-   <body>
-      <form action="/resize/" method="POST" enctype = "multipart/form-data">
-         <div>
-            <label for="file">Image: </label>
-            <input id="file" required type="file" name="image" accept="image/*" />
-         </div>
-         <div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #file {
+            cursor: pointer;
+        }
+
+        #drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #drop-area:hover {
+            border-color: #666;
+        }
+
+        #drop-area p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        input[type="submit"] {
+            background-color: #666;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <form action="/resize/" method="POST" enctype="multipart/form-data">
+        <div id="drop-area">
+            <p>Drag & Drop Image or <label for="file-input">Browse</label></p>
+            <input type="file" id="file-input" required name="image" accept="image/*" />
+        </div>
+        <div>
             <label for="width">Width</label>
-            <input id="width" required type="text" name="width" />
-         </div>
-         <div>
-            <label for="height"></label>
-            <input id="height" required type="text" name="height" />
-         </div>
-         <input type="submit"/>
-      </form>   
-   </body>
+            <input id="width" placeholder="Image width in px" value="256" required type="text" name="width" />
+        </div>
+        <div>
+            <label for="height">Height</label>
+            <input id="height" placeholder="Image height in px" value="256" required type="text" name="height" />
+        </div>
+        <input type="submit" />
+    </form>
+
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('highlight');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('highlight');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('highlight');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            dropArea.classList.remove('highlight');
+        });
+    </script>
+</body>
 </html>
