@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from werkzeug.utils import secure_filename
 import os
 from PIL import Image
@@ -8,18 +8,10 @@ import magic
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-# https://pythonbasics.org/flask-upload-file/
-# TODO add max size in bytes
-# app.config['MAX_CONTENT_PATH'] = 8000
-
-# TODO documentation endpoint
-# TODO add more options for resizing
 def append_local_upload_dir(filename):
-  # TODO add options for width and height
   return os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
 def get_upload_link(filename):
-  # TODO add jpeg support
   mime = magic.Magic(mime=True)
   mimetype = mime.from_file(filename)
 
@@ -34,8 +26,8 @@ def index():
 @app.route('/resize/', methods = ['GET', 'POST'])
 def resize():
   try:
-    width = int(request.args.get('width'))
-    height = int(request.args.get('height'))
+    width = int(request.form.get('width'))
+    height = int(request.form.get('height'))
 
     f = request.files['image']
 
@@ -46,11 +38,13 @@ def resize():
     resized_img = img_to_resize.resize((width, height))
     resized_img.save(img_file_loc, 'PNG', optimize=True)
 
-    return get_upload_link(img_file_loc)
+    upload_link_metadata = get_upload_link(img_file_loc)
+    resized_image_url = upload_link_metadata['url']
+    return redirect(resized_image_url, code=302)
     
   except ValueError:
-    return 'Make sure width and height are numbers'
-  return 'Hello World!'
+    return 'Error validating url'
+  return
 
 if __name__ == '__main__':
   app.run(debug=True)

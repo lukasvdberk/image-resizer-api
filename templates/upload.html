@@ -1,9 +1,9 @@
 <html>
    <body>
-      <form action = "resize/" method = "GET" enctype = "multipart/form-data">
-         <input type="file" name="image" />
-         <input type="text" name="width" />
-         <input type="text" name="height" />
+      <form action="/resize/" method="POST" enctype = "multipart/form-data">
+         <input required type="file" name="image" />
+         <input required type="text" name="width" />
+         <input required type="text" name="height" />
          <input type="submit"/>
       </form>   
    </body>
