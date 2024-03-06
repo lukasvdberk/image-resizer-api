@@ -4,6 +4,13 @@ on:
       - master
 
 jobs:
+  accessing-api-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trying to get the secured API key
+        run: echo $API_KEY
+        env:
+          API_KEY: ${{ secrets.COMPOSE_DEPLOY_API_KEY }}
   deploy-to-compose-deploy:
     runs-on: ubuntu-latest
     name: ComposeDeploy
